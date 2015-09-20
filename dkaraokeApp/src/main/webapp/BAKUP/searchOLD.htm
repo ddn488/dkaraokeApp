@@ -1,0 +1,169 @@
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="css/jquery.mobile-1.4.3.css">
+<!-- <link rel="stylesheet" href="css/main.css"> -->
+
+<script src="jquery-2.1.1.js"></script>
+<script src="jquery.mobile-1.4.3.js"></script>
+
+
+<script language="Javascript">
+
+	function onload() {
+		var imported = document.createElement('script');
+		imported.src = './songData.js';
+		document.head.appendChild(imported);
+
+		var searchText = document.getElementById('searchText');
+		if (searchText) {
+			searchText.value = '';
+			searchText.focus();
+		}
+	}
+	
+	function search(text) {
+
+		var matchResutlsArray = [];		
+		
+		for (i = 0; i < songData.items.length; i++) {
+
+			if (songData.items[i].title.toLowerCase().indexOf(text) != -1) {
+				title = songData.items[i].title;
+				artist = songData.items[i].artist;
+				matchResutlsArray[matchResutlsArray.length] = title + "," +  artist;
+			}
+		}
+
+		if (matchResutlsArray.length > 0) {
+// 			deleteAllRows('searchResultTable');
+			for (i = 0; i < matchResutlsArray.length; i++) {
+				addRow(i,matchResutlsArray[i]);
+			}
+		}
+	}
+
+	function addSongToQueue(row) {
+		var td = document.getElementById('row'+row);
+		var newRowContent = "<tr><td>"+td.innerHTML+"</td></tr>";
+		$("#queueTable tbody").append(newRowContent);	
+	}
+
+	function addRow(row,text) {
+		var newRowContent = "<tr><td width='24' align='middle'><a href='javascript:addSongToQueue("+row+");' class='ui-btn ui-corner-all ui-icon-plus ui-btn-icon-notext'></a></td><td id='row"+row+"' valign='baseline' >" + text + "</td></tr>";
+		$("#searchResultTable tbody").append(newRowContent);
+	}
+
+	function deleteRow(tableID) {
+		try {
+			var table = document.getElementById(tableID);
+			var rowCount = table.rows.length;
+
+			for (var i = 0; i < rowCount; i++) {
+				var row = table.rows[i];
+				var chkbox = row.cells[0].childNodes[0];
+				if (null != chkbox && true == chkbox.checked) {
+					table.deleteRow(i);
+					rowCount--;
+					i--;
+				}
+
+			}
+		} catch (e) {
+			alert(e);
+		}
+	}
+
+	function deleteAllRows(tableID) {
+		var table = document.getElementById(tableID);
+		var rowCount = table.rows.length;
+
+		for (var i = 0; i < rowCount; i++) {
+			table.deleteRow(i);
+			rowCount--;
+			i--;
+		}
+
+	}
+
+	function searchResultTableEvents() {
+		var table = document.getElementById("searchResultTable");
+		var rows = table.rows; // or table.getElementsByTagName("tr");
+		for (var i = 0; i < rows.length; i++) {
+			rows[i].onclick = (function() { // closure
+				var cnt = i; // save the counter to use in the function
+				return function() {
+					alert("row" + cnt + " data=" + this.cells[0].innerHTML);
+				}
+			})(i);
+		}
+	}
+</script>
+
+</head>
+
+<body onload="onload();">
+	<div data-role="page">
+		<div data-role="header">
+<!-- 			<h1>DKaraoke Main V 0.1</h1> -->
+		</div>
+
+		<div data-role="main" class="ui-content">
+			
+			<table  id='queueTable' data-role="table" class="ui-responsive" align="center">
+				<thead>
+					<tr><th>Queue</th></tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		
+		
+      <form name="searchForm" id="searchForm" onsubmit="search(searchText.value);">
+        <input id="searchText" type="search" size="50" value=""></input> 
+    </form>			
+			<script>			
+				$('#searchText').tap(function(event) {
+				
+					var value = searchText.value + event.key;
+					//alert(value);
+		
+					if (event.keyCode == 8) { // backspace
+						value = searchText.value.substring(0,searchText.value.length - 1);
+					} 
+					
+					if (value.length > 3) {
+						search(value.toLowerCase());
+					} else {
+						//deleteAllRows('searchResultTable');
+					}
+				
+				});	
+			</script>
+				
+			
+			<b>Search Results:</b>
+			<table  id='searchResultTable' data-role="table" class="ui-responsive" align="center">
+				<thead>
+					<tr>
+						<th width='24' height='24'></th>
+						<th></th>						
+					</tr>
+				</thead>
+				<tbody>
+<!-- 					<tr> -->
+<!-- 						<td><a href="javascript:addSongToQueue();" class="ui-btn ui-corner-all ui-icon-plus ui-btn-icon-notext"></a></td> -->
+<!-- 						<td valign="middle">Tinh Tham Duyen Que.Manh Dinh & Son Tuyen.Unknown</td>						 -->
+<!-- 					</tr> -->
+				</tbody>
+			</table>
+		</div>
+
+<!-- 		<div data-role="footer"> -->
+<!-- 			<h4>Provided the best experience Karaoke system</h4> -->
+<!-- 		</div> -->
+
+	</div>
+
+
+</body>
+</html>

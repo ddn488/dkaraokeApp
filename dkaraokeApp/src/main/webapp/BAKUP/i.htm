@@ -1,0 +1,89 @@
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DKaraoke - File Index</title>
+<link rel="stylesheet"
+	href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-2.1.1.js"></script>
+<script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
+<link rel="stylesheet" href="/resources/demos/style.css">
+<script>
+	$(function() {
+		$("#tabs").tabs({
+		    beforeLoad: function(event, ui){
+		        alert('loading');
+		    },
+		    load: function(event, ui){
+		        alert('loaded');
+		    }
+		});
+	});
+	
+	$(document).ready(function() {
+	    $("#nav li a").click(function() {
+	 
+	        $("#content").empty().append("<div id='loading'><img src='images/loading.gif' alt='Loading' /></div>");
+	        $("#nav li a").removeClass('current');
+	        $(this).addClass('current');
+	 
+	        $.ajax({ url: this.href, success: function(html) {
+	            $("#content").empty().append(html);
+	            }
+	    });
+	    return false;
+	    });
+	});
+	
+	
+	$(function () {
+		 $('#tabs').tabs({
+			 activate: function (event, ui) {
+			 var $activeTab = $('#tabs').tabs('option', 'active');
+			 if ($activeTab == 1) {
+			 // HERE YOU CAN ADD CODE TO RUN WHEN THE SECOND TAB HAS BEEN CLICKED
+			 }
+		 	}
+		 });
+		});
+	
+</script>
+</head>
+
+<body>
+	<div id="tabs">
+		<ul>
+			<li><a href="#tabA">A</a></li>
+			<li><a href="#tabB">B</a></li>
+			<li><a href="#tabC">C</a></li>
+			<li><a href="#tabD">D</a></li>
+			<li><a href="#tabE">E</a></li>
+			<li><a href="#tabF">F</a></li>
+			<li><a href="#tabG">G</a></li>
+			<li><a href="#tabH">H</a></li>
+			<li><a href="#tabI">I</a></li>
+			<li><a href="#tabJ">J</a></li>
+			<li><a href="#tabK">K</a></li>
+			<li><a href="#tabL">L</a></li>
+			<li><a href="#tabM">M</a></li>
+			<li><a href="#tabN">N</a></li>
+			<li><a href="#tabO">O</a></li>
+			<li><a href="#tabP">P</a></li>
+			<li><a href="#tabQ">Q</a></li>
+			<li><a href="#tabR">R</a></li>
+			<li><a href="#tabS">S</a></li>
+			<li><a href="#tabT">T</a></li>
+			<li><a href="#tabU">U</a></li>
+			<li><a href="#tabV">V</a></li>
+			<li><a href="#tabW">W</a></li>
+			<li><a href="#tabX">X</a></li>
+			<li><a href="#tabY">Y</a></li>
+			<li><a href="#tabZ">Z</a></li>
+		</ul>
+		<div id="content">Select tabs to view index song names</div>
+	</div>
+	
+	
+	
+	
+</body>
+</html>

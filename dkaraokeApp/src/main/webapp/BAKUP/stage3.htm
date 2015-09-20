@@ -1,0 +1,274 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+
+<link rel="stylesheet" href="css/main.css" type="text/css" />
+
+<script language="Javascript">
+	
+	var songQueue = [];
+	var currentPlayIndex;
+	var currentPlayFileName='';
+	var prevPlayFileName='';
+	var nextPlayFileName='';
+	
+	function onload() {
+		var imported = document.createElement('script');
+		imported.src = './songData.js';
+		document.head.appendChild(imported);
+	}
+
+	function getVLC(id) {
+		return document.getElementById(id);
+	}
+	
+	function registerVLCEvent(event, handler) {
+	    var vlc = getVLC("vlc");	    
+	    if (vlc) {
+	        if (vlc.attachEvent) {          // Microsoft
+	            vlc.attachEvent (event, handler);
+		    } else if (vlc.addEventListener) {   // Mozilla: DOM level 2
+		        vlc.addEventListener (event, handler, false);
+		    } else {
+		        // DOM level 0
+		        vlc["on" + event] = handler;
+		    }
+	    }
+	}
+	
+	// event callback function for testing
+	
+	function mediaPlayerOpeningHandler() {				
+		insertText("playingSongTitle",currentPlayFileName);
+	}
+	
+	function mediaPlayerendReachedHandler() {
+		next();
+	}
+	
+	function trackToggle() {
+		var trackCount = vlc.audio.count;
+		
+		if(trackCount ==3) {
+			if(vlc.audio.track==0) {
+				vlc.audio.track=1;
+			} else if (vlc.audio.track== 1) {
+				vlc.audio.track=2;
+				if(vlc.audio.track== 1) {
+					vlc.audio.track=0;
+				}
+			} else if (vlc.audio.track== 2) {
+				vlc.audio.track=1;
+			}
+		} else 	{	
+			 if (vlc.audio.track == 1) {
+				vlc.audio.track = 2;
+			} else if (vlc.audio.track == 2) {
+				vlc.audio.track = 1;
+			}
+		}
+	}
+
+	function requestFullScreen() {
+		var docElm = document.documentElement;
+		if (docElm.requestFullscreen) {
+			docElm.requestFullscreen();
+		} else if (docElm.mozRequestFullScreen) {
+			docElm.mozRequestFullScreen();
+		} else if (docElm.webkitRequestFullScreen) {
+			docElm.webkitRequestFullScreen();
+		} else if (docElm.msRequestFullscreen) {
+			docElm.msRequestFullscreen();
+		}
+	}
+
+	function cancelFullScreen() {
+		if (document.exitFullscreen) {
+			document.exitFullscreen();
+		} else if (document.mozCancelFullScreen) {
+			document.mozCancelFullScreen();
+		} else if (document.webkitCancelFullScreen) {
+			document.webkitCancelFullScreen();
+		} else if (document.msExitFullscreen) {
+			document.msExitFullscreen();
+		}
+	}
+
+	function addSong(index) {
+		
+		if(index) {
+		// check songQueue first to see it exists or not
+			for (i=0; i < songQueue.length; i++) {
+				if(songQueue[i].substring(0, index.length).localeCompare(index) == 0 ) {
+					songIndex.value = '';
+					return; // index exists in songQueue
+				}
+			}
+			
+			 for (i = 0; i < songData.items.length; i++) {
+				    if (index.localeCompare(songData.items[i].id) == 0) {
+				    	fileName = songData.items[i].title;			    									    				    	
+				    	songQueue[songQueue.length]= fileName;
+				    	break;
+				    } 
+				}
+	
+			// reset the value
+			songIndex.value = '';
+			refreshSongQueue();
+		}
+
+	}
+	
+	function refreshSongQueue() {
+		// clear them all there are 12 display cells 
+		for(i=0;i<12;i++) {
+			var tdId = 'q'+(i+1);
+			insertText(tdId,'');
+		}
+		
+		// refresh with the new list;
+		for (j=0; j<songQueue.length;j++) {
+			var tdId = 'q'+(j+1);
+			insertText(tdId,songQueue[j].substring(0, 5));		
+		}
+	}
+	
+
+	function play() {	
+		if(songQueue.length>0) {
+			currentPlayFileName=songQueue[0];
+			vlc.playlist.add("file:///F:/Karaoke/" + currentPlayFileName + ".vob",currentPlayFileName,"");
+			songIndex.focus();
+			vlc.playlist.play();
+		}
+	}
+
+	
+	
+	function next() {
+		if(songQueue.length > 1) {
+			vlc.playlist.items.remove(0);
+	
+			// remove the current song just finish
+			for (i = 0; i < songQueue.length; i++) {
+			    if (currentPlayFileName.localeCompare(songQueue[i]) == 0) {		    			    	
+			    	songQueue.splice(0, 1);  // remove the top item
+			    	refreshSongQueue();
+			    	break;
+			    } 
+			}		
+			
+			play();
+
+		}		
+	}
+	
+	function insertText (id, text) {
+	    document.getElementById(id).innerHTML = text;
+	}
+	
+	function songIndexKeyPressHandler(event) {		
+		
+		var value = songIndex.value+event.key;
+		
+		if(event.keyCode == 8) {  // backspace
+			value = songIndex.value.substring(0, songIndex.value.length-1);
+		} 
+		
+		if(event.keyCode == 13) {			
+			addSong(songIndex.value);
+			insertText("searchSongTitle","");
+			this.focus(); 
+		} else if( value.length > 2) {
+			found=false;
+			for (i = 0; i < songData.items.length; i++) {
+				if (value.localeCompare(songData.items[i].id) == 0) {
+					title = songData.items[i].title;
+					insertText("searchSongTitle",title);
+					found=true;
+		    		break;
+		    	} 
+			}
+			if(!found) {
+				insertText("searchSongTitle","");
+			}
+		} else {
+			insertText("searchSongTitle","");
+		}		
+	}
+	
+	
+	</script>
+</head>
+
+
+<body onload="onload();">
+
+	<embed type="application/x-vlc-plugin"
+		pluginspage="http://www.videolan.org" version="VideoLAN.VLCPlugin.2"
+		id="vlc" width="1900" height="1045" allowfullscreen="true"
+		autostart="false" toolbar="false" text="Dennis Karaoke :)"
+		/>
+
+	<br />
+
+	<table width="1918">
+		<tr height="30">
+			<td width="60"><img src="icons/dkaraokeLogo.png" /></td>
+			<!-- //#00a0df ; #f32837 f7d728 blue: 4488db  green 14ca00-->
+			
+			<td id ="q1" width="50" style="color:#14ca00;"></td>
+			<td id ="q2" width="50" style="color:#13af02;"></td>
+			<td id ="q3" width="50" style="color:109b01;"></td>			
+			<td id ="q4" width="50" style="color:#0e7e01;"></td>
+			<td id ="q5" width="50" style="color:#095601;"></td>
+			<td id ="q6" width="50" style="color:#085002;"></td>			
+			<td id ="q7" width="50" style="color:#052901;"></td>
+			<td id ="q8" width="50" style="color:#052901;"></td>
+			<td id ="q9" width="50" style="color:#052901;"></td>			
+			<td id ="q10" width="50" style="color:#052901;"></td>
+			<td id ="q11" width="50" style="color:#052901;"></td>
+			<td id ="q12" width="50" style="color:#052901;"></td>			
+			
+			<td width="20" ></td>
+			
+<!-- 			<td width="32"><img src="icons/prev.png" alt="Previous" -->
+<!-- 				onclick="vlc.playlist.prev()" width="24" height="24" /></td> -->
+			<td width="32"><img src="icons/pause.png" alt="Pause"
+				onclick="vlc.playlist.togglePause()" width="24" height="24" /></td>
+			<td width="32"><img src="icons/play.png" alt="Play"
+				onclick="play()" width="24" height="24" /></td>
+			<td width="32"><img src="icons/stop.png" alt="Stop"
+				onclick="vlc.playlist.stop()" width="24" height="24" /></td>
+			<td width="32"><img src="icons/next.png" alt="Next"
+				onclick="next()" width="24" height="24" /></td>
+			<td width="32"><img src="icons/trackToggle.png" alt="Toggle between tracks"
+				onclick="trackToggle()" width="24" height="24" /></td>
+			
+
+	<!--  		<td width="32"><img src="icons/plus.png" alt="Add Song to Playlist"
+				onclick="addSong(songIndex.value)" " width="24" height="24" /></td>  -->
+
+			<td width="50"><input id="songIndex" type="text"  name="songIndex" size="5"
+				style="font-size:14pt; background-color: #000; color: #deb127; padding: 2px; border: none; border-bottom: solid 1px #c9c9c9;" 
+				autofocus  onkeypress="songIndexKeyPressHandler(event);"></td>
+						
+			<td width="400" id="searchSongTitle" style="color: #deb127; font-weight: 100;" ></td>
+	
+			<td width="600" id="playingSongTitle"  style="color: #1daeff; font-weight: 100;" align="right"></td>
+
+			<td width="20"></td>
+
+		
+			
+
+			
+
+			<!-- //<td  style="color:#00a0df;">4636     Khi Giac Mo Ve.Lam Nhat Tien & Nhu Loan.Unknown</td> -->
+
+		</tr>
+	</table>
+</body>
+</html>
+
