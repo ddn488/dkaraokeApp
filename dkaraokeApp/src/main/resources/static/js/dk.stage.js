@@ -3,33 +3,31 @@ var currentPlayIndex;
 var currentPlayFileName = '';
 var prevPlayFileName = '';
 var nextPlayFileName = '';
-var curSetTrack =1;
-var karaokeDrive='C'; // default
+var curSetTrack = 1;
+var karaokeDrive = 'C'; // default
 
 function onload() {
-	
-	
+
 	// load songData js
 	var imported = document.createElement('script');
 	imported.src = './data/songData.js';
 	document.head.appendChild(imported);
-	
-	
-	// make AJAX call to get host address
-	$.get("/getHostAddress", function(ip, status){
-		document.getElementById("ipAddr").appendChild(document.createTextNode(ip + '/'));
-	  //  $("#ipAddr").appendChild(document.createTextNode(ip));
-	});
-	
-	// search Karaoke drive location  C > D > E > F > G
-	$.get("/getKaraokeDrive", function(drive, status){
-		karaokeDrive =  drive;
-	});
-	
-	connect(); // stomp client connect to server
-	
-}
 
+	// make AJAX call to get host address
+	$.get("/getHostAddress", function(ip, status) {
+		document.getElementById("ipAddr").appendChild(
+				document.createTextNode(ip + '/'));
+		// $("#ipAddr").appendChild(document.createTextNode(ip));
+	});
+
+	// search Karaoke drive location C > D > E > F > G
+	$.get("/getKaraokeDrive", function(drive, status) {
+		karaokeDrive = drive;
+	});
+
+	connect(); // stomp client connect to server
+
+}
 
 function getVLC(id) {
 	return document.getElementById(id);
@@ -56,7 +54,7 @@ function mediaPlayerOpeningHandler() {
 }
 
 function mediaPlayerendReachedHandler() {
-	
+
 	next();
 }
 
@@ -81,7 +79,7 @@ function trackToggle() {
 			vlc.audio.track = 1;
 		}
 	}
-	
+
 	curSetTrack = vlc.audio.track;
 }
 
@@ -110,9 +108,10 @@ function cancelFullScreen() {
 	}
 }
 function addFileNameToPlayList(fileName) {
-	
-	var id = vlc.playlist.add("file:///"+karaokeDrive+":/Karaoke/" + fileName);
-	
+
+	var id = vlc.playlist.add("file:///" + karaokeDrive + ":/Karaoke/"
+			+ fileName);
+
 	return id;
 }
 
@@ -122,11 +121,11 @@ function addSong(index) {
 		songIndex.value = '';
 		// check songQueue first to see it exists or not
 		for (i = 0; i < songQueue.length; i++) {
-			if (songQueue[i].substring(0, index.length).localeCompare(index) == 0) {				
+			if (songQueue[i].substring(0, index.length).localeCompare(index) == 0) {
 				return; // index exists in songQueue
 			}
 		}
-		
+
 		// send songIndex to webSocket "song"
 		addSongIndex(index);
 
@@ -142,14 +141,21 @@ function refreshSongQueue() {
 
 	// refresh with the new list;
 	for (j = 0; j < songQueue.length; j++) {
-		var tdId = 'q' + (j + 1);		
-		insertText(tdId, songQueue[j].substring(0, songQueue[j].indexOf(" ")-1));
+		var tdId = 'q' + (j + 1);
+		var songIndex = songQueue[j].substring(0, 5).trim(); // max songIndex is 5 digits
+
+		if( songIndex.indexOf(" ") > 0)
+			insertText(tdId, songQueue[j].substring(0, songIndex.indexOf(" ")));
+		else {
+			insertText(tdId, songIndex);
+		}
+
 	}
 }
 
 function trim1(str) {
 	return str.replace(/^\s\s*/, '').replace(/\s\s*$/, ''); // remove all
-															// whitespace
+	// whitespace
 }
 
 function extractSongIndex(fileName) {
@@ -180,7 +186,8 @@ function play() {
 		}
 
 		songIndex.focus();
-		if (vlc.audio.track > 0) vlc.audio.track = curSetTrack; 
+		if (vlc.audio.track > 0)
+			vlc.audio.track = curSetTrack;
 		vlc.playlist.play();
 	} else {
 		alert("Queue is empty...");
@@ -192,20 +199,19 @@ function next() {
 		vlc.playlist.items.remove(0);
 		// remove the current song just finish
 		var songIndexRemove = extractSongIndex(currentPlayFileName);
-//		// send the remove songIndex to the server
+		// // send the remove songIndex to the server
 		for (i = 0; i < songQueue.length; i++) {
 			if (currentPlayFileName
 					.localeCompare(extractIndexTitleArtist(songQueue[i])) == 0) {
-								
+
 				songQueue.splice(0, 1); // remove the top item
-				refreshSongQueue();				
+				refreshSongQueue();
 				break;
 			}
 		}
 		currentPlayFileName = extractIndexTitleArtist(songQueue[0]);
 		addFileNameToPlayList(songQueue[0]);
 		songIndex.focus();
-		
 
 		removeSongIndex(songIndexRemove);
 
@@ -250,27 +256,26 @@ function songIndexKeyPressHandler(event) {
 }
 
 // All short cut for the app defined below here
-shortcut.add("Ctrl+T",function() {
+shortcut.add("Ctrl+T", function() {
 	trackToggle();
 });
 
-shortcut.add("Ctrl+F",function() {
+shortcut.add("Ctrl+F", function() {
 	requestFullScreen();
 });
 
-shortcut.add("Ctrl+P",function() {
+shortcut.add("Ctrl+P", function() {
 	play();
 });
 
-shortcut.add("Ctrl+N",function() {
+shortcut.add("Ctrl+N", function() {
 	next();
 });
 
-shortcut.add("Ctrl+R",function() {
+shortcut.add("Ctrl+R", function() {
 	rewind();
 });
 
-shortcut.add("Ctrl+S",function() {
+shortcut.add("Ctrl+S", function() {
 	pause();
 });
-
