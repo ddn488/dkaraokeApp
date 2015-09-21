@@ -142,9 +142,8 @@ function refreshSongQueue() {
 
 	// refresh with the new list;
 	for (j = 0; j < songQueue.length; j++) {
-		var tdId = 'q' + (j + 1);
-		songQueue[j]
-		insertText(tdId, songQueue[j].substring(0, 5));
+		var tdId = 'q' + (j + 1);		
+		insertText(tdId, songQueue[j].substring(0, songQueue[j].indexOf(" ")));
 	}
 }
 
