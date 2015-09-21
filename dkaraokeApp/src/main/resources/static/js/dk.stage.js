@@ -16,13 +16,13 @@ function onload() {
 	
 	
 	// make AJAX call to get host address
-	$.get("/dkaraoke/getHostAddress", function(ip, status){
+	$.get("/getHostAddress", function(ip, status){
 		document.getElementById("ipAddr").appendChild(document.createTextNode(ip + '/'));
 	  //  $("#ipAddr").appendChild(document.createTextNode(ip));
 	});
 	
 	// search Karaoke drive location  C > D > E > F > G
-	$.get("/dkaraoke/getKaraokeDrive", function(drive, status){
+	$.get("/getKaraokeDrive", function(drive, status){
 		karaokeDrive =  drive;
 	});
 	

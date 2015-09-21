@@ -5,7 +5,7 @@ function setConnected(connected) {
 }
 
 function connect() {
-	var socket = new SockJS('/dkaraoke/song');
+	var socket = new SockJS('/song');
 	stompClient = Stomp.over(socket);
 	
 	stompClient.connect({}, function(frame) {
