@@ -5,7 +5,7 @@
 
 	<groupId>dennis</groupId>
 	<version>0.1.0</version>
-	<artifactId>testSpringBoot</artifactId>
+	<artifactId>dkaraokeApp</artifactId>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
