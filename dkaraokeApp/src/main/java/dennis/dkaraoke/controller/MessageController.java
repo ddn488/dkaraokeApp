@@ -1,8 +1,12 @@
 package dennis.dkaraoke.controller;
 
 import java.io.File;
+import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -43,26 +47,55 @@ public class MessageController {
 
 	@RequestMapping(value = "/getHostAddress", method = RequestMethod.GET)
 	@ResponseBody
-	public String getHostAddress() throws UnknownHostException {
-		InetAddress ip = InetAddress.getLocalHost();
+	public String getHostAddress() throws UnknownHostException, SocketException {
+		String osName = System.getProperty("os.name");
 
-		// return ip.getHostName();
-		return ip.getHostAddress();
+		if (osName.startsWith("Windows")) {
+			InetAddress ip = InetAddress.getLocalHost();
+			// return ip.getHostName();
+			return ip.getHostAddress();
+		} else if (osName.startsWith("Linux")) {
+			Enumeration<NetworkInterface> nics = NetworkInterface.getNetworkInterfaces();
+			while (nics.hasMoreElements()) {
+				NetworkInterface ni = nics.nextElement();
+				if (ni.getName().startsWith("eth") || ni.getName().startsWith("wlan")) {
+					Enumeration<InetAddress> ee = ni.getInetAddresses();
+					while (ee.hasMoreElements()) {
+						InetAddress i = ee.nextElement();
+						if (i instanceof Inet4Address) { // use only IP4 address
+							return i.getHostAddress();
+						}
+					}
+				}
+			}
+
+		}
+
+		return "";
 
 	}
 
 	@RequestMapping(value = "/getKaraokeDrive", method = RequestMethod.GET)
 	@ResponseBody
 	public String getKaraokeDrive() {
-		// search Karaoke drive location C > D > E
-		String[] drives = { "D", "E", "C", "F", "G" };
 
-		for (String drive : drives) {
-			File f = new File("/" + drive + ":/Karaoke");
-			if (f.exists()) {
-				return drive;
+		String osName = System.getProperty("os.name");
+
+		if (osName.startsWith("Windows")) {
+			// search Karaoke drive location in the order "D", "E", "C", "F",
+			// "G"
+			String[] drives = { "D", "E", "C", "F", "G" };
+
+			for (String drive : drives) {
+				File f = new File("/" + drive + ":/Karaoke");
+				if (f.exists()) {
+					return drive;
+				}
 			}
+		} else if (osName.startsWith("Linux")) {
+			return "/media/dennis/HD-GDU3";
 		}
+		// file:///media/dennis/HD-GDU3/Karaoke/80060.Phai%20Chi%20Em%20Biet%20%28%20with%20Lyrics%29.Lam%20Anh.405Sing.mp4
 
 		return "";
 	}

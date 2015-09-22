@@ -108,8 +108,8 @@ function cancelFullScreen() {
 	}
 }
 function addFileNameToPlayList(fileName) {
-
-	var id = vlc.playlist.add("file:///" + karaokeDrive + ":/Karaoke/"
+	//file:///media/dennis/HD-GDU3/Karaoke/80060.Phai%20Chi%20Em%20Biet%20%28%20with%20Lyrics%29.Lam%20Anh.405Sing.mp4
+	var id = vlc.playlist.add("file://" + karaokeDrive + "/Karaoke/"
 			+ fileName);
 
 	return id;
