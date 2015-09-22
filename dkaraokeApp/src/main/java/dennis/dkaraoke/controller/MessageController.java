@@ -84,10 +84,10 @@ public class MessageController {
 		if (osName.startsWith("Windows")) {
 			// search Karaoke drive location in the order "D", "E", "C", "F",
 			// "G"
-			String[] drives = { "D", "E", "C", "F", "G" };
+			String[] drives = { "/D:", "/E:", "/C:", "/F:", "/G:" };
 
 			for (String drive : drives) {
-				File f = new File("/" + drive + ":/Karaoke");
+				File f = new File(drive + "/Karaoke");
 				if (f.exists()) {
 					return drive;
 				}
