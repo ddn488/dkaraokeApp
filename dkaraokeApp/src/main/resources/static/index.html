@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head lang="en">
+<meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/themes/dkaraoke.css" />
+  <link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />
+  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile.structure-1.4.5.min.css" /> 
+  <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script> 
+  <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script> 
 
-<link rel="stylesheet" href="css/jquery.mobile-1.4.3.css">
-<link rel="stylesheet" href="css/main.css">
-
-<script type="text/javascript" src="./assets/jquery-2.1.1.js"></script>
-<script type="text/javascript" src="./assets/jquery.mobile-1.4.3.js"></script>
 <script type="text/javascript" src="./assets/sockjs-0.3.4.js"></script>
 <script type="text/javascript" src="./assets/stomp.js"></script>
 
@@ -17,24 +19,25 @@
 
 	function onload() {		
 		var searchText = document.getElementById('searchText');
+		
 		if (searchText) {
 			searchText.value = '';
 			searchText.focus();
 		}
+		
 		$("#searchText").keyup(function(e){
 			 if(e.keyCode == 13){
 				 var q = $("#searchText").val();
 			        search(q);
 			 }
 	      });
-		
-		
-		connect(); // stomp client connect to server
+				
+		connect(); // stomp client connect to server		
 	}
 	
 	function search(text) {		
 		$("#searchResultTable tbody").empty();
-		var searchBy = $("#SearchBy :radio:checked").val();
+		var searchBy = $("#searchBy :radio:checked").val();
 		var matchResutlsArray = [];		
 		text = text.trim().toLowerCase();
 		if(text.length===0)return;
@@ -132,80 +135,76 @@
 		}
 	}
 </script>
-<style>
-.ui-icon-loading {
-    background: url(http://code.jquery.com/mobile/1.1.0-rc.1/images/ajax-loader.png);
-    background-size: 46px 46px;
-    width:46px;
-    height:46px;
-    -webkit-transform: rotate(360deg);
-    -webkit-animation-name: spin;
-    -webkit-animation-duration: 1s;
-    -webkit-animation-iteration-count:  infinite;
-    -webkit-animation-timing-function: linear;
-}
-@-webkit-keyframes spin {
-    from {-webkit-transform: rotate(0deg);}
-    to {-webkit-transform: rotate(360deg);}
-}
-</style>
+	
+</script>
+
 </head>
 
 <body onload="onload();">
-	<div data-role="page">
-		<div data-role="header">
-<!-- 			<h1>DKaraoke Main V 0.1</h1> -->
-		</div>
-
-		<div data-role="main" class="ui-content">
-			
-			<table id='queueTable' data-role="table" class="ui-responsive" align="center">
-				<thead>
-					<tr>
-					  <td>
-					  	<form>
-					  		<fieldset data-role="controlgroup" data-type="horizontal" id="SearchBy" name="SearchBy">
-					        <legend><b>Search By:</b></legend>
-					        <input name="radio-choice-h-2" id="radio-choice-h-2a" type="radio" checked="checked" value="Title">
-					        <label for="radio-choice-h-2a">Title</label>
-					        <input name="radio-choice-h-2" id="radio-choice-h-2b" type="radio" value="Artist">
-					        <label for="radio-choice-h-2b">Artist</label>
-					    </fieldset>
-					  	</form>
-					  </td>
-					 </tr>
-					 <tr>
-					 	<td><input id="searchText" type="search" value=""/>
-					 		<input type="button" value="Search" onclick="search($('#searchText').val());"/>
-					 	</td>
-					 </tr>
-					 <tr>
-					 	<td>					 		
-					 		<table id='searchResultTable' data-role="table" class="ui-responsive" align="center">
-					 		  <thead>
-					 		  	<td colspan="2"><b>Results:</b></td>
-					 		  </thead>								
-								<tbody>
-								</tbody>
-							</table>
-					 	</td>
-					 </tr>
-				</thead>
-				<tbody></tbody>
-			</table>
-
-        
-			
-			
-			
-		</div>
-
-<!-- 		<div data-role="footer"> -->
-<!-- 			<h4>Provided the best experience Karaoke system</h4> -->
-<!-- 		</div> -->
-
-	</div>
-
-
+<div data-role="page" data-control-title="Home" id="page1">
+	<div data-role="collapsible-set">
+            <div data-role="collapsible" data-collapsed="true">
+                <h3>DKaraoke Player</h3>
+				<img id="trackToggle" width="40" height="40" src="icons/trackToggle.png" />
+				<img id="rewind" width="40" height="40" src="icons/rewind.png"  />
+				<img id="pause" width="40" height="40" src="icons/pause.png"  />
+				<img id="play" width="40" height="40" src="icons/play.png"  />
+				<img id="next" width="40" height="40" src="icons/next.png"  />
+				<img id="fullScreen" width="40" height="40" src="icons/fullScreen.png"  />
+				
+				<script>
+					$( "#trackToggle" ).click(function() {
+						sendRemote('trackToggle');
+					});
+					
+					$( "#rewind" ).click(function() {
+						sendRemote('rewind');
+					});
+					
+					$( "#pause" ).click(function() {
+						sendRemote('pause');
+					});
+					
+					$( "#play" ).click(function() {
+						sendRemote('play');
+					});
+					
+					$( "#next" ).click(function() {
+						sendRemote('next');
+					});
+					
+					$( "#fullScreen" ).click(function() {
+						sendRemote('fullScreen');
+					});
+				</script>
+            </div>
+                        
+    </div>
+    
+    
+    <div class="ui-grid-a">
+    	<div class="ui-block-a" style="width: 68%" >
+    		<form>
+	            <fieldset id="searchBy" name="searchBy" data-role="controlgroup" data-type="horizontal">
+	                <input id="titleRadio" name="searchChoice" value="Title" type="radio" checked="checked">
+	                <label for="titleRadio">Title</label>
+	                <input id="artistRadio" name="searchChoice" value="Artist" type="radio">
+	                <label for="artistRadio">Artist</label>
+	                <input id="indexRadio" name="searchChoice" value="Index" type="radio">
+	                <label for="indexRadio">Index</label>
+	            </fieldset>
+	       </form>    
+          </div>
+           <div class="ui-block-b" style="width: 32%"><input type="button" value="Search" onclick="search($('#searchText').val());"/>
+           </div>
+     </div>    
+  	<input name="searchText" id="searchText" placeholder="" value="" type="search">
+	            
+       
+     <table id='searchResultTable' data-role="table" class="ui-responsive" align="center">
+		  <thead><td colspan="2"><b>Results:</b></td></thead>								
+		<tbody></tbody>
+	</table>
+</div>
 </body>
 </html>

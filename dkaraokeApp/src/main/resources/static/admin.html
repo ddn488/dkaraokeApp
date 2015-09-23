@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/themes/dkaraoke.css" />
+  <link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />
+  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile.structure-1.4.5.min.css" /> 
+  <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script> 
+  <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script> 
+
+
+<script type="text/javascript" src="./assets/sockjs-0.3.4.js"></script>
+<script type="text/javascript" src="./assets/stomp.js"></script>
+
+<!-- <script language="javascript" src="./data/songData.js"></script> -->
+<script type="text/javascript" src="./js/dk.stompClient.js"></script>
+
+<script language="Javascript">
+
+	function onload() {				
+		connect(); // stomp client connect to server
+	}
+	
+</script>
+
+
+<body onload="onload();">
+
+	<div align="center" >
+	<h3>Media Player Control</h3>
+		<img id="trackToggle" width="48" height="48" src="icons/trackToggle.png" />
+		<img id="rewind" width="48" height="48" src="icons/rewind.png"  />
+		<img id="pause" width="48" height="48" src="icons/pause.png"  />
+		<img id="play" width="48" height="48" src="icons/play.png"  />
+		<img id="next" width="48" height="48" src="icons/next.png"  />
+		<img id="fullScreen" width="48" height="48" src="icons/fullScreen.png"  />
+	</div>
+
+<script>
+$( "#trackToggle" ).click(function() {
+	sendRemote('trackToggle');
+});
+
+$( "#rewind" ).click(function() {
+	sendRemote('rewind');
+});
+
+$( "#pause" ).click(function() {
+	sendRemote('pause');
+});
+
+$( "#play" ).click(function() {
+	sendRemote('play');
+});
+
+$( "#next" ).click(function() {
+	sendRemote('next');
+});
+
+$( "#fullScreen" ).click(function() {
+	sendRemote('fullScreen');
+});
+
+</script>
+
+</body>
+</html>

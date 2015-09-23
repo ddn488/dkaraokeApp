@@ -1,4 +1,5 @@
 var stompClient = null;
+var remoteControl = null;
 
 function setConnected(connected) {
 	console.log('Connected: ' + frame);
@@ -8,17 +9,27 @@ function connect() {
 	var socket = new SockJS('/song');
 	stompClient = Stomp.over(socket);
 	
-	stompClient.connect({}, function(frame) {
-			
+	stompClient.connect({}, function(frame) {			
 		var subcritionId = stompClient.subscribe('/topic/song', function(message) {
 			updateSongQueue(JSON.parse(message.body));
-		});		
+		});
 				
 	});
-		
-	// send an empty string to get the current server queue content
-	//removeSongIndex("");
+	
+	//
+	var remoteControlSocket = new SockJS('/remoteControl');
+	remoteControl = Stomp.over(remoteControlSocket);
+	
+	remoteControl.connect({}, function(frame) {			
+		var remoteControlId =  remoteControl.subscribe('/topic/remoteControl', function(message) {
+			playerRemoteControlAction(message.body);
+		});
+	});
+}
 
+
+function sendRemote(action) {
+	remoteControl.send("/app/remoteControl", {}, action);
 }
 
 function disconnect() {

@@ -28,8 +28,13 @@ public class MessageController {
 	private Set<String> songQueue = new LinkedHashSet<String>();// to keep the
 																// elements in
 																// the inserting
-																// order.
-
+	
+	@MessageMapping("/remoteControl")
+	@SendTo("/topic/remoteControl")
+	public String remoteControlActionHandle(String action) throws InterruptedException {
+		return action;
+	}
+	
 	@MessageMapping("/song")
 	@SendTo("/topic/song")
 	public Object[] songActionHandle(SongAction songAction) throws InterruptedException {
@@ -44,6 +49,7 @@ public class MessageController {
 		// subscribers will receive
 		return songQueue.toArray();
 	}
+	
 
 	@RequestMapping(value = "/getHostAddress", method = RequestMethod.GET)
 	@ResponseBody
