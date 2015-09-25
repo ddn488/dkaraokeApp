@@ -3,6 +3,8 @@
 REM C:\ffmpeg\bin\ffmpeg.exe -i "e:\Karaoke\10007   Tinh Ta Voi Minh.Y Nhi.Unknown.vob" -map 0:1 -map 0:2 -map 0:3 -c:a libmp3lame -b:a 128k -ar 44100 "d:\Karaoke\10007   TinhTa Voi Minh.YNhi.Unknown.mp4"
 REM Or use mp3 codec: -c:a libmp3lame -b:a 128k -ar 44100
 
+REM Usage: convert2mp4.bat E:\Karaoke D:\Karaoke
+
 REM walk directory structure and convert each file in quiet mode
 set "sourcefolder=%~1"
 set "targetfolder=%~2"
