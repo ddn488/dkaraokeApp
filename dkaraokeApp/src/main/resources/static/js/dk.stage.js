@@ -136,7 +136,8 @@ function addSong(index) {
 		songIndex.value = '';
 		// check songQueue first to see it exists or not
 		for (i = 0; i < songQueue.length; i++) {
-			if (songQueue[i].substring(0, index.length).localeCompare(index) == 0) {
+			var songIndexInQueue = extractSongIndex(songQueue[i]);
+			if ( index ===  songIndexInQueue) {
 				return; // index exists in songQueue
 			}
 		}

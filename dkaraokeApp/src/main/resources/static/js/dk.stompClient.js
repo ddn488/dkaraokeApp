@@ -63,13 +63,22 @@ function updateSongQueue(songIndexList) {
 		// search in the current songQueue
 		if(songQueue.length) {
 			for (var j = 0; j < songQueue.length; j++) {
-				if (songQueue[j].substring(0, songIndex.length)== songIndex) {
+				var first6Char = songQueue[j].substring(0,6);
+				var songIndexQueue ='';
+				// if file name in format xxxxx.Acds then
+				if (first6Char.indexOf('.') == -1) {
+					songIndexQueue = first6Char.substring(0, first6Char.indexOf(' '));
+				} else {
+					songIndexQueue = first6Char.substring(0, first6Char.indexOf('.'));					
+				}
+				
+				if (songIndex === songIndexQueue) {
 					notFound = false; // song index exists in songQueue
 				}
 			}
 		}
 		
-		// if the song index is not in the song queue then do the followings:
+		// if the song index is not in the song q eue then do the followings:
 		// 1) Search for the full name of the song in songData based on the songIndex 
 		// 2) add the full file name to songQueue
 		if(notFound) {
