@@ -63,7 +63,7 @@ public class BuildJSONSongArrayFromDisk {
 		
 		BufferedWriter writer = null;
 		try {
-			writer = new BufferedWriter(new FileWriter("C:/eclipseLunaWorkspace/dkaraoke/WebContent/songData.js"));
+			writer = new BufferedWriter(new FileWriter("/C:/Users/dennis/git/dkaraokeApp/dkaraokeApp/src/main/resources/static/data/songData.js"));
 			writer.write(b.toString());
 		} catch (IOException e) {
 			System.err.println(e);
